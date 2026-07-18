@@ -1,0 +1,114 @@
+<title>DocumentDB Indexing — Backend Notes</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="A practical, ground-up guide to indexing in Amazon DocumentDB: B-trees, the ESR rule, explain() plans, covered queries, TTL indexes, and production builds." />
+<link rel="stylesheet" href="../../assets/theme.css" />
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<header class="topbar">
+  <a class="brand" href="../../index.html">📚 Backend Notes</a>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark and light mode">🌙 Dark</button>
+</header>
+
+<main class="layout">
+  <nav class="sidebar" aria-label="Guide index">
+    <h4>Backend Notes</h4>
+    <ul>
+      <li><a href="../../index.html">← All guides</a></li>
+    </ul>
+    <h4>On this page</h4>
+    <ul id="toc"><li><a href="#">Loading…</a></li></ul>
+  </nav>
+
+  <div class="content">
+    <p class="crumbs"><a href="../../index.html">Backend Notes</a> / Databases / DocumentDB Indexing</p>
+    <article id="article">Loading guide…</article>
+  </div>
+</main>
+
+<footer class="site-footer">Backend Notes · DocumentDB Indexing Guide</footer>
+
+<script src="../../assets/theme.js"></script>
+<script>
+  (function () {
+    var isDark = function () {
+      var attr = document.documentElement.getAttribute("data-theme");
+      if (attr) return attr === "dark";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    };
+
+    mermaid.initialize({ startOnLoad: false, theme: isDark() ? "dark" : "default" });
+
+    function slugify(text) {
+      return text
+        .toLowerCase()
+        .trim()
+        .replace(/[`*_~]/g, "")
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-");
+    }
+
+    var renderer = new marked.Renderer();
+    var seen = {};
+    renderer.heading = function (text, level, raw) {
+      var slug = slugify(raw);
+      seen[slug] = (seen[slug] || 0) + 1;
+      if (seen[slug] > 1) slug += "-" + (seen[slug] - 1);
+      return "<h" + level + ' id="' + slug + '">' + text + "</h" + level + ">\n";
+    };
+    renderer.code = function (code, infostring) {
+      if (infostring === "mermaid") {
+        var escaped = code.replace(/</g, "&lt;");
+        return '<div class="mermaid" data-raw="' + escaped.replace(/"/g, "&quot;") + '">' + escaped + "</div>";
+      }
+      var lang = infostring ? ' class="language-' + infostring + '"' : "";
+      return "<pre><code" + lang + ">" + code.replace(/</g, "&lt;") + "</code></pre>";
+    };
+    marked.use({ renderer: renderer });
+
+    fetch("content.md")
+      .then(function (r) { return r.text(); })
+      .then(function (md) {
+        // Drop the source doc's own hand-written TOC section; we build ours from headings.
+        md = md.replace(/## Table of Contents[\s\S]*?\n---\n/, "");
+        document.getElementById("article").innerHTML = marked.parse(md);
+
+        var toc = document.getElementById("toc");
+        var headings = document.querySelectorAll("#article h2");
+        toc.innerHTML = "";
+        headings.forEach(function (h) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent.replace(/^\d+\.\s*/, "");
+          li.appendChild(a);
+          toc.appendChild(li);
+        });
+
+        mermaid.run({ querySelector: ".mermaid" });
+
+        var links = toc.querySelectorAll("a");
+        var sections = Array.prototype.slice.call(headings);
+        function onScroll() {
+          var pos = window.scrollY + 100;
+          var current = sections[0];
+          sections.forEach(function (s) {
+            if (s.offsetTop <= pos) current = s;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", current && a.getAttribute("href") === "#" + current.id);
+          });
+        }
+        window.addEventListener("scroll", onScroll);
+        onScroll();
+      })
+      .catch(function (err) {
+        document.getElementById("article").textContent = "Failed to load guide: " + err;
+      });
+
+    window.addEventListener("themechange", function (e) {
+      mermaid.initialize({ startOnLoad: false, theme: e.detail === "dark" ? "dark" : "default" });
+    });
+  })();
+</script>

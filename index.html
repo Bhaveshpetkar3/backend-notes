@@ -1,0 +1,54 @@
+<title>Backend Notes</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="A growing collection of practical backend engineering guides." />
+<link rel="stylesheet" href="assets/theme.css" />
+
+<header class="topbar">
+  <a class="brand" href="index.html">📚 Backend Notes</a>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark and light mode">🌙 Dark</button>
+</header>
+
+<main class="layout">
+  <nav class="sidebar" aria-label="Site index">
+    <h4>Categories</h4>
+    <ul>
+      <li><a href="#databases">Databases</a></li>
+    </ul>
+    <h4>Databases</h4>
+    <ul>
+      <li><a href="databases/documentdb-indexing/index.html">DocumentDB Indexing</a></li>
+    </ul>
+  </nav>
+
+  <div class="content">
+    <h1>Backend Notes</h1>
+    <p>
+      A practical, ground-up collection of backend engineering guides — databases,
+      APIs, infrastructure, and everything in between. Each guide starts from
+      fundamentals and works up to production concerns.
+    </p>
+
+    <h2 id="databases">Databases</h2>
+    <div class="card-grid">
+      <a class="card" href="databases/documentdb-indexing/index.html" style="text-decoration:none;">
+        <span class="badge">Amazon DocumentDB</span>
+        <h3>Indexing — From Fundamentals to Production</h3>
+        <p>
+          What an index is, how B-trees work, the ESR rule for compound
+          indexes, reading <code>explain()</code> plans, covered queries,
+          TTL indexes, and a production build checklist.
+        </p>
+      </a>
+    </div>
+
+    <p style="color:var(--fg-muted); font-size:0.9rem;">
+      More categories (APIs, caching, messaging, observability, ...) will be
+      added here over time.
+    </p>
+  </div>
+</main>
+
+<footer class="site-footer">Backend Notes · built with plain HTML, no build step</footer>
+
+<script src="assets/theme.js"></script>
